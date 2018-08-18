@@ -9,7 +9,7 @@ function add_data(req) {
 	var trap = new TrapsModel({
 		_id: new mongoose.Types.ObjectId(),
         trap_id: req.params.trap_id, 
-        request_date: Date.now,
+        request_date: Date.now(),
         remote_ip: req.ip,
 		request_method: req.method,
   		query_string: req.query,
@@ -45,15 +45,16 @@ router.get('/', (req, res) => {
 
 // ============= Display requests here =================================================
 router.get('/:trap_id/requests', (req, res) => {
-	return TrapsModel.find(function (err, articles) {
-        if (!err) {
-            return res.send(articles);
-        } else {
-            res.statusCode = 500;
-            log.error('Internal error(%d): %s',res.statusCode,err.message);
-            return res.send({ error: 'Server error' });
-        }
-    });
+	return TrapsModel.find({trap_id: req.params.trap_id}).sort({'request_date': -1}).
+		exec(function (err, traps) {
+			if (!err) {
+            	return res.send(traps);
+        	} else {
+            	res.statusCode = 500;
+            	console.log('Internal error(%d): %s',res.statusCode,err.message);
+            	return res.send({ error: 'Server error' });
+        	}
+    	});
 });
 
 
