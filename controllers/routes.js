@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+require('dotenv').load();
 const TrapsModel = require('../models/trap_model').TrapsModel;
 
 router.get('/', (req, res) => {
@@ -10,7 +10,11 @@ router.get('/', (req, res) => {
 router.get('/:trap_id/requests', ( { params: { trap_id } }, res) => {
   return TrapsModel.find({ trap_id }).sort({ 'request_date': -1 }).exec((err, traps) => {
   	  if (!err) {
-       	return res.send(traps);
+       	res.render("requests", {
+          title: trap_id,
+          urlRequest: process.env.urlRequest + trap_id,
+          traps: traps
+        });
       } else {
        	res.statusCode = 500;
        	console.log('Internal error(%d): %s', res.statusCode, err.message);
@@ -34,6 +38,7 @@ router.all('/:trap_id', (req, res) => {
   trap.save((err) => {
     if (!err) {
       console.log("trap created");
+      req.io.to('update').emit(req.params.trap_id);
       return res.send({ status: 200, request: trap });
     } else {
       console.log(err);

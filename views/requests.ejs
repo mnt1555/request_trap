@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%=title %></title>
+  <meta charset="utf-8" />
+  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io.connect('<%=urlRequest %>');
+    socket.on('update', (data) => {
+      console.log('1111111111111111');
+      console.log(data);
+    });
+  </script>
+</head>
+<body>
+  <table style="width:100%">
+    <tr>
+      <th>Request date</th>
+      <th>Remote ip</th>
+      <th>Request method</th>
+      <th>scheme</th>
+      <th>Query-string</th>
+      <th>Query-params</th>
+      <th>Cookies</th>
+      <th>Headers</th>
+    </tr>
+   <% for (var i = 0; i < traps.length; i++) { %>
+    <tr>
+      <td><%= traps[i].request_date %></td>
+      <td><%= traps[i].remote_ip %></td>
+      <td><%= traps[i].request_method %></td>
+      <td><%= traps[i].query_string %></td>
+      <td><%= traps[i].query_params %></td>
+      <td><%= traps[i].cookies %></td>
+      <td><%= traps[i].headers %></td>
+   <% } %>
+  </table>
+</body>
+<html>
