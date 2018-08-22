@@ -2,38 +2,64 @@
 <html>
 <head>
   <title><%=title %></title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <meta charset="utf-8" />
   <script src="http://localhost:3000/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io.connect('<%=urlRequest %>');
-    socket.on('update', (data) => {
-      console.log('1111111111111111');
-      console.log(data);
-    });
-  </script>
 </head>
 <body>
-  <table style="width:100%">
-    <tr>
-      <th>Request date</th>
-      <th>Remote ip</th>
-      <th>Request method</th>
-      <th>scheme</th>
-      <th>Query-string</th>
-      <th>Query-params</th>
-      <th>Cookies</th>
-      <th>Headers</th>
-    </tr>
-   <% for (var i = 0; i < traps.length; i++) { %>
-    <tr>
-      <td><%= traps[i].request_date %></td>
-      <td><%= traps[i].remote_ip %></td>
-      <td><%= traps[i].request_method %></td>
-      <td><%= traps[i].query_string %></td>
-      <td><%= traps[i].query_params %></td>
-      <td><%= traps[i].cookies %></td>
-      <td><%= traps[i].headers %></td>
-   <% } %>
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script>
+    const addRow = (data) => {
+      const table = document.getElementById("trapTable");
+
+      const row = table.insertRow(1);      
+      row.insertCell(0).innerHTML = data.requestDate;
+      row.insertCell(1).innerHTML = data.remoteIp;
+      row.insertCell(2).innerHTML = data.requestMethod;
+      row.insertCell(3).innerHTML = -JSON.stringify(data.queryString);
+      row.insertCell(4).innerHTML = data.queryParams;
+      row.insertCell(5).innerHTML = -JSON.stringify(data.cookies);
+      row.insertCell(6).innerHTML = -JSON.stringify(data.headers);
+    }
+
+    const createSocket = () => {
+      const socket = io.connect('<%=urlRequest %>');
+      socket.on('update', (data) => {
+        addRow(data);
+      });
+    }
+
+    $(document).ready(() => {
+      createSocket();
+    });
+
+  </script>
+  
+  <table id="trapTable" class="table table-striped" style="width:100%">
+    <thead>
+      <tr>
+        <th>Request date</th>
+        <th>Remote ip</th>
+        <th>Request method</th>
+        <th>scheme</th>
+        <th>Query-string</th>
+        <th>Query-params</th>
+        <th>Cookies</th>
+        <th>Headers</th>
+      </tr>
+    </thead>>
+    <tbody>
+    <% for (var i = 0; i < traps.length; i++) { %>
+      <tr>
+        <td><%= traps[i].requestDate %></td>
+        <td><%= traps[i].remoteIp %></td>
+        <td><%= traps[i].requestMethod %></td>
+        <td><%= -JSON.stringify(traps[i].queryString) %></td>
+        <td><%= traps[i].queryParams %></td>
+        <td><%= -JSON.stringify(traps[i].cookies) %></td>
+        <td><%= -JSON.stringify(traps[i].headers) %></td>
+     <% } %>
+    </tbody>>
   </table>
 </body>
 <html>
