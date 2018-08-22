@@ -25,7 +25,7 @@
     const createSocket = () => {
       const socket = io.connect('<%=urlRequest %>');
       socket.on('update', (data) => {
-        addRow(data);
+        if (data.trapId === '<%=title %>') { addRow(data); }
       });
     }
 
