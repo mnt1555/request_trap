@@ -10,6 +10,8 @@
   "author": "Butov N.N.",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "ip": "^1.1.5",
     "nodemon": "^1.18.3"
   },
   "devDependencies": {

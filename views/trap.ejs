@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Trap</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <meta charset="utf-8"/>
+</head>
+  <body>
+    <table id="trapTable" class="table table-striped">
+      <thead>
+        <tr>
+          <th>Request Status</th>
+          <th>Request date</th>
+          <th>Remote ip</th>
+          <th>Request method</th>
+          <th>scheme</th>
+          <th>Query-string</th>
+          <th>Query-params</th>
+          <th>Cookies</th>
+          <th>Headers</th>
+          <th>Body</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><%= data.status %></td>
+          <td><%= data.requestDate %></td>
+          <td><%= data.remoteIp %></td>
+          <td><%= data.requestMethod %></td>
+          <td><%=scheme %></td>
+          <td><%- JSON.stringify(data.queryString) %></td>
+          <td><%- JSON.stringify(data.queryParams) %></td>
+          <td><%- JSON.stringify(data.cookies) %></td>
+          <td><%- JSON.stringify(data.headers) %></td>
+          <td><%- JSON.stringify(data.body) %></td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

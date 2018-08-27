@@ -2,11 +2,12 @@ const trapsModel = require('../models/trapModel').trapsModel;
 const fs = require('fs');
 const dotenv = require('dotenv');
 const envConfig = dotenv.parse(fs.readFileSync('.example.env'));
+const scheme = envConfig.scheme;
+const ip = require("ip");
 
 module.exports = {
   home: (reg, res) => {
-    //res.json({ response: 'a GET request for looking splash page with some instructions'});
-    res.render("index", {});
+    res.render("index", {urlRequest: envConfig.urlRequest});
   },
 
   requests: ( { params: { trapId } }, res) => {
@@ -15,7 +16,8 @@ module.exports = {
         res.render("requests", {
         title: trapId,
         urlRequest: envConfig.urlRequest,
-        traps: traps
+        traps: traps,
+        scheme: envConfig.scheme
         });
       } else {
         res.statusCode = 500;
@@ -26,29 +28,35 @@ module.exports = {
   },
 
   traps: (req, res) => {
+    today = new Date();
+    
+    let remoteIp = (req.query['ip'] == undefined) ? req.body['ip']: req.query['ip'];
     const data = { 
       trapId: req.params.trapId, 
-      requestDate: Date.now(),
-      remoteIp: req.ip,
+      requestDate: today.toLocaleString(),
+      remoteIp: (remoteIp == undefined) ? ip.address(): remoteIp,
       requestMethod: req.method,
       queryString: req.query,
       queryParams: req.params,
       cookies: req.cookies,
-      headers: req.headers
+      headers: req.headers,
+      trapBody: req.body
     };
     const trap = new trapsModel(data);
-
     trap.save((err) => {
       if (!err) {
         console.log("trap created");
         const socket_ = require('../app.js').socket_;
+        data['scheme'] = scheme;
         socket_.emit('update', data);
-        return res.send({ status: 200, request: trap });
+        res.statusCode = 200;
+        data['status'] = "Success result";
       } else {
         console.log(err);
         res.statusCode = (err.name === 'ValidationError') ? 400 : 500;
-        return (res.statusCode === 400) ? res.status(400).json({ error: err.name }) : res.status(500).json({ error: 'Server error' });
+        (res.statusCode === 400) ? data['status'] = "Validation Error" : data['status'] = "Server error";
       }
+    res.render("trap", {scheme: scheme, status: res.statusCode, data: data});
     });
   }
 }

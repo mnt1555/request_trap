@@ -8,7 +8,8 @@ const trapsSchema = new mongoose.Schema({
   queryString: Object,
   queryParams: Array,
   cookies: Object,
-  headers: Object
+  headers: Object,
+  trapBody: Object
 });
 
 trapsModel = mongoose.model('Traps', trapsSchema);

@@ -4,12 +4,49 @@
   <title>Request Trap</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <meta charset="utf-8" />
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+      let paramCounter = 0;
+
+      const createDiv = (parentElement) => {
+        const div  = document.createElement('div');
+        div.class = "form-group";
+        parentElement.appendChild(div);
+        return div;
+      }
+
+      const createInput = (parentElement, elementName) => {
+        const inp  = document.createElement('input');
+        inp.type = 'text';
+        inp.id = elementName + paramCounter;
+        parentElement.appendChild(inp);
+      }
+      
+      const get_parent_add_input = () => {
+        const parent_form = document.getElementById('parameters');
+        const parent_element = createDiv(parent_form);
+        createInput(parent_element, 'param');
+        createInput(parent_element, 'value');
+        paramCounter++;
+      }
+
+      const getRequestParams = () => {
+        result = {}
+        for (var i = 0; i < paramCounter; i++) {
+          paramName = document.getElementById('param' + i).value;
+          if (paramName != "") {
+            result[paramName] = document.getElementById('value' + i).value;
+          }
+        }
+        return result;
+      }
+    </script>
 </head>
 <body>
   <div class="d-flex justify-content-center align-items-center container ">
-    <form>
+    <form id="formRequest">
       <div class="form-group">
         <label for="requestMethod">Request Method</label>
 
@@ -24,33 +61,42 @@
         <label for="trapId">Trap ID</label>
         <input type="text" class="form-control" id="trapId" placeholder="Enter Trap ID">
       </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <div class="form-group">
+        <label for="btnParameter">Add Parameter</label>
+        <button type="button" class="btn btn-primary" onclick="get_parent_add_input()">Add</button>
+      </div>
+      <div id="parameters"></div>
+      <div class="form-group">
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
     </form>
   </div>
   </form>
 
   <script>
-    //const request = requare('../');
-    trapId = document.getElementById('trapId').value;
-    method = document.getElementById('requestMethod').value;
-    console.log(trapId, method);
+    var ip = '127.0.0.1';
+    $.get("http://ipinfo.io", function(response) {ip = response.ip;}, "jsonp");
+
+    const sendRequest = (trap_id, method, data) => {
+    $.ajax({type: method,
+      url: '<%= urlRequest%>' + trap_id,
+      data: data,
+      success  : () => { console.log("Успешное выполнение"); },
+      error    : () => { console.log(jqXHR); },
+      complete : () => { console.log("Завершение выполнения"); }
+      })
+    }
+
+    $("#formRequest").on("submit", () => {
+      trapId = document.getElementById('trapId').value;
+      method = document.getElementById('requestMethod').value;
+      params = getRequestParams();
+      params['ip'] = ip;
+	    sendRequest(trapId, method, params);
+    });
+    
   </script>
 
-  <div class="messages">
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-      <strong>Success!</strong> Your request has been sent successfully.      
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>      
-    </div>
-
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      <strong>Error!</strong> A problem has been occurred while submitting your data.
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>            
-    </div
-  </div>
-
 </body>
-<html>
+</html>
