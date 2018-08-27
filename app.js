@@ -10,7 +10,6 @@ const app = express();
 const port = envConfig.port || 3000;
 
 const server = require('http').Server(app);
-const io = require('socket.io')(server);
 const controller = require('./controllers/trapController.js');
 
 app.set("view engine", "ejs");
@@ -36,8 +35,5 @@ const connectDb = () => {
 
 connectDb();
 
-socket_ = io.sockets.on('connection', (socket) => {
-  return socket;
-});
-
-module.exports.socket_ = socket_;
+const io = require('socket.io')(server);
+app.set('socketio', io);

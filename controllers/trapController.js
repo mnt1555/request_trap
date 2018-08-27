@@ -45,18 +45,14 @@ module.exports = {
     const trap = new trapsModel(data);
     trap.save((err) => {
       if (!err) {
-        console.log("trap created");
-        const socket_ = require('../app.js').socket_;
         data['scheme'] = scheme;
-        socket_.emit('update', data);
-        res.statusCode = 200;
+        const io = req.app.get('socketio');
+        io.emit('update', data);
         data['status'] = "Success result";
       } else {
-        console.log(err);
-        res.statusCode = (err.name === 'ValidationError') ? 400 : 500;
-        (res.statusCode === 400) ? data['status'] = "Validation Error" : data['status'] = "Server error";
+          data['status'] = err.name;
       }
-    res.render("trap", {scheme: scheme, status: res.statusCode, data: data});
+    res.render("trap", {scheme: scheme, data: data});
     });
   }
 }
