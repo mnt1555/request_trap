@@ -10,8 +10,6 @@
   "author": "Butov N.N.",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "ip": "^1.1.5",
     "nodemon": "^1.18.3"
   },
   "devDependencies": {
@@ -22,6 +20,8 @@
     "mongoose": "^5.2.8",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
+    "body-parser": "^1.18.3",
+    "ip": "^1.1.5",
     "request": "^2.88.0"
   },
   "repository": {

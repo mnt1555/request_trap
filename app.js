@@ -1,24 +1,17 @@
-const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const fs = require('fs');
-const dotenv = require('dotenv');
-const envConfig = dotenv.parse(fs.readFileSync('.example.env'));
+const envConfig = require('dotenv').load();
 const mongoose = require('mongoose');
+const routes = require('./routes/trapRoutes.js');
 
-const app = express();
+const app = require('express')();
 const port = envConfig.port || 3000;
-
 const server = require('http').Server(app);
-const controller = require('./controllers/trapController.js');
 
 app.set("view engine", "ejs");
 app.get('/favicon.ico', (req, res) => res.status(204));
 app.use(cookieParser());
 app.use(bodyParser());
-app.use('/:trapId/requests', controller.requests);
-app.use('/:trapId', controller.traps);
-app.use('/', controller.home);
 
 const startServer = () => {
   server.listen(port, () => {
@@ -27,7 +20,8 @@ const startServer = () => {
 }
 
 const connectDb = () => {
-  mongoose.connect(envConfig.mongoDb, {useNewUrlParser: true}).then(
+  mongoose.connect(envConfig.mongoDb || "mongodb://127.0.0.1:27017/trap", 
+    {useNewUrlParser: true}).then(
     () => { startServer() },
     err => { console.log('connection error:', err.message); }
   );
@@ -36,4 +30,9 @@ const connectDb = () => {
 connectDb();
 
 const io = require('socket.io')(server);
-app.set('socketio', io);
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+});
+
+app.use('/', routes);

@@ -13,7 +13,6 @@
           <th>Request date</th>
           <th>Remote ip</th>
           <th>Request method</th>
-          <th>scheme</th>
           <th>Query-string</th>
           <th>Query-params</th>
           <th>Cookies</th>
@@ -27,7 +26,6 @@
           <td><%= data.requestDate %></td>
           <td><%= data.remoteIp %></td>
           <td><%= data.requestMethod %></td>
-          <td><%=scheme %></td>
           <td><%- JSON.stringify(data.queryString) %></td>
           <td><%- JSON.stringify(data.queryParams) %></td>
           <td><%- JSON.stringify(data.cookies) %></td>

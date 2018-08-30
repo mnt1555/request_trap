@@ -16,12 +16,11 @@
       row.insertCell(0).innerHTML = data.requestDate;
       row.insertCell(1).innerHTML = data.remoteIp;
       row.insertCell(2).innerHTML = data.requestMethod;
-      row.insertCell(3).innerHTML = data.scheme;
-      row.insertCell(4).innerHTML = JSON.stringify(data.queryString);
-      row.insertCell(5).innerHTML = JSON.stringify(data.queryParams);
-      row.insertCell(6).innerHTML = JSON.stringify(data.cookies);
-      row.insertCell(7).innerHTML = JSON.stringify(data.headers);
-      row.insertCell(8).innerHTML = JSON.stringify(data.trapBody);
+      row.insertCell(3).innerHTML = JSON.stringify(data.queryString);
+      row.insertCell(4).innerHTML = JSON.stringify(data.queryParams);
+      row.insertCell(5).innerHTML = JSON.stringify(data.cookies);
+      row.insertCell(6).innerHTML = JSON.stringify(data.headers);
+      row.insertCell(7).innerHTML = JSON.stringify(data.trapBody);
     }
 
     const createSocket = () => {
@@ -43,7 +42,6 @@
         <th>Request date</th>
         <th>Remote ip</th>
         <th>Request method</th>
-        <th>scheme</th>
         <th>Query-string</th>
         <th>Query-params</th>
         <th>Cookies</th>
@@ -57,7 +55,6 @@
         <td><%= traps[i].requestDate %></td>
         <td><%= traps[i].remoteIp %></td>
         <td><%= traps[i].requestMethod %></td>
-        <td><%=scheme %></td>
         <td><%- JSON.stringify(traps[i].queryString) %></td>
         <td><%- JSON.stringify(traps[i].queryParams) %></td>
         <td><%- JSON.stringify(traps[i].cookies) %></td>
