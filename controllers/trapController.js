@@ -8,19 +8,18 @@ module.exports = {
     res.render("index", {urlRequest});
   },
 
-  requests: ( { params: { trapId } }, res) => {
-    return trapsModel.find({ trapId }).sort({ 'requestDate': -1 }).exec((err, traps) => {
-      if (!err) {
-        res.render("requests", { title: trapId, urlRequest, traps });
-      } else {
-        res.statusCode = 500;
-        console.log(`Internal error (${res.statusCode}): ${err.message}`);
-        return res.send( { error: 'Server error' } );
-      }
-    });
+  requests: async ( { params: { trapId } }, res) => {
+    try {
+      let traps = await trapsModel.find({ trapId }).sort({ 'requestDate': -1 });
+      res.render("requests", { title: trapId, urlRequest, traps }); 
+    } catch (err) {
+      res.statusCode = 500;
+      console.log(`Internal error (${res.statusCode}): ${err.message}`);
+      return res.send( { error: 'Server error' } );
+    }
   },
 
-  traps: (req, res) => {
+  traps: async (req, res) => {
     today = new Date();
     
     const remoteIp = req.query['ip'] || req.body['ip'];
@@ -36,14 +35,13 @@ module.exports = {
       trapBody: req.body
     };
     const trap = new trapsModel(data);
-    trap.save((err) => {
-      if (!err) {
-        req.io.emit('update', data);
-        data['status'] = "Success result";
-      } else {
-          data['status'] = err.name;
-      }
+    try {
+      await trap.save();
+      req.io.emit('update', data);
+      data['status'] = "Success result";
+    } catch (err){
+      data['status'] = err.name;
+    }
     res.render("trap", {data});
-    });
   }
 }
