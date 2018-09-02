@@ -34,6 +34,7 @@ const connectDb = async () => {
     await startServer();
   } catch (err){
     console.log('connection error:', err.message);
+    process.exit(err.statusCode);
   }
 }
 
